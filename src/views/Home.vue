@@ -30,14 +30,14 @@ export default {
   },
   setup() {
     const platformStore = usePlatformStore()
-    const activePlatformIndex = ref(0)
     const loading = ref(false)
 
+    // 使用 store 中的 platforms 和 activePlatform
     const platforms = computed(() => platformStore.platforms)
-    const activePlatform = computed(() => platformStore.platforms[activePlatformIndex.value])
+    const activePlatform = computed(() => platformStore.activePlatform)
+    const activePlatformIndex = computed(() => platformStore.activePlatformIndex)
 
     const handlePlatformChange = (index) => {
-      activePlatformIndex.value = index
       platformStore.setActivePlatform(index)
     }
 
@@ -48,7 +48,10 @@ export default {
     }
 
     onMounted(() => {
-      platformStore.initializePlatforms()
+      // 确保平台数据已初始化
+      if (platformStore.platforms.length === 0) {
+        platformStore.initializePlatforms()
+      }
     })
 
     return {

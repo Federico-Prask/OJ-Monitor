@@ -3,14 +3,9 @@ import axios from 'axios'
 // 动态获取当前主机名来构建API URL
 const getApiBaseUrl = () => {
   if (import.meta.env.DEV) {
-    // 开发环境：使用代理或当前域名的5000端口
-    const hostname = window.location.hostname;
-    if (hostname.includes('github.dev')) {
-      // 在 GitHub Codespaces 中
-      const codespaceName = hostname.split('.')[0];
-      return `https://${codespaceName}-5000.app.github.dev/api`;
-    }
-    return '/api'; // 使用代理
+    // 开发环境：总是使用本地代理（由 vite.config.js 转发到后端）
+    // Vite 会通过本地代理将 /api 请求转发到 http://localhost:5000
+    return '/api';
   }
   // 生产环境：使用相对路径或配置的URL
   return import.meta.env.VITE_API_BASE_URL || '/api';

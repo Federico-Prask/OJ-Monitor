@@ -26,6 +26,12 @@ builder.Services.AddHttpClient();
 
 // 注册爬虫服务
 builder.Services.AddScoped<IDataCrawler, LuoguCrawler>();
+builder.Services.AddScoped<LuoguWatchlistCrawler>();
+builder.Services.AddSingleton<IWatchlistCrawlerService>(sp =>
+{
+    var crawlerFactory = sp.GetRequiredService<LuoguWatchlistCrawler>();
+    return new WatchlistCrawlerService(crawlerFactory, sp.GetRequiredService<ILogger<WatchlistCrawlerService>>());
+});
 
 // 注册业务服务
 builder.Services.AddScoped<IPlatformService, PlatformService>();

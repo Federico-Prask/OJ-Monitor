@@ -23,14 +23,25 @@ namespace OJMonitor.API.Controllers
         [HttpPost("start")]
         public async Task<ActionResult<object>> StartWatchlist([FromBody] WatchlistStartRequest request)
         {
-            if (request?.Usernames == null || request.Usernames.Count == 0)
+            _logger.LogInformation($"StartWatchlist called with request: {System.Text.Json.JsonSerializer.Serialize(request)}");
+            
+            if (request == null)
             {
-                return BadRequest(new { error = "Usernames list is required" });
+                _logger.LogWarning("Request is null");
+                return BadRequest(new { error = "Request body is required" });
+            }
+
+            if (request.Usernames == null || request.Usernames.Count == 0)
+            {
+                _logger.LogWarning("Usernames list is empty or null");
+                return BadRequest(new { error = "Usernames list is required and must not be empty" });
             }
 
             try
             {
                 var interval = request.IntervalSeconds > 0 ? request.IntervalSeconds : 5;
+                _logger.LogInformation($"Starting watchlist for {request.Usernames.Count} users with interval {interval}s");
+                
                 await _watchlistCrawlerService.StartWatchlistCrawlerAsync(request.Usernames, interval);
                 
                 return Ok(new 
@@ -42,7 +53,7 @@ namespace OJMonitor.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error starting watchlist: {ex.Message}");
+                _logger.LogError($"Error starting watchlist: {ex.Message}\n{ex.StackTrace}");
                 return StatusCode(500, new { error = ex.Message });
             }
         }
@@ -109,7 +120,7 @@ namespace OJMonitor.API.Controllers
 
     public class WatchlistStartRequest
     {
-        public List<string> Usernames { get; set; }
+        public List<string> Usernames { get; set; } = new List<string>();
         public int IntervalSeconds { get; set; } = 5;
     }
 

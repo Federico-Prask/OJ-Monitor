@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OJMonitor.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+01ddc4cf78f23a1dd36d549b772c2bb4e68c4a8d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ff658430c85e107a27a3b8d61e80e2c0af048cb")]
 [assembly: System.Reflection.AssemblyProductAttribute("OJMonitor.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OJMonitor.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

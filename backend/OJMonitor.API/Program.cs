@@ -4,11 +4,17 @@ using OJMonitor.API.Data;
 using OJMonitor.API.Services;
 using OJMonitor.API.Services.Crawlers;
 using OJMonitor.API.Services.Interfaces;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
 builder.Services.AddEndpointsApiExplorer();
 
 // 添加 Swagger 服务

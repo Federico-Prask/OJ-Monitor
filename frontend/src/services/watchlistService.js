@@ -1,4 +1,4 @@
-import apiClient from '../api'
+import apiClient from './api'
 
 /**
  * 监视列表 API 服务

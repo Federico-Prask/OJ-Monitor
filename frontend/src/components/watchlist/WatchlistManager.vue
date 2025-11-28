@@ -244,9 +244,16 @@ const startWatchlist = async (id, usernames) => {
     watchlists[id].isRunning = true
     activeWatchlistId = id
 
-    // 开始轮询通知
-    notificationInterval = setInterval(fetchNotifications, 3000)
-    alert('监视列表已启动！')
+    alert('监视列表已启动！爬虫将每 5 秒检查一次用户提交，请稍候...')
+
+    // 等待 10 秒后再开始轮询，给爬虫时间收集初始数据
+    setTimeout(() => {
+      if (notificationInterval) {
+        clearInterval(notificationInterval)
+      }
+      notificationInterval = setInterval(fetchNotifications, 5000) // 每 5 秒轮询一次
+      console.log('开始轮询通知...')
+    }, 10000)
   } catch (error) {
     alert('启动失败: ' + error.message)
   }
@@ -300,13 +307,15 @@ const removeUser = (id, username) => {
 const fetchNotifications = async () => {
   try {
     const newNotifications = await watchlistService.getNotifications()
-    if (newNotifications.length > 0) {
+    if (newNotifications && Array.isArray(newNotifications) && newNotifications.length > 0) {
+      console.log('收到新通知:', newNotifications)
       notifications.value = [...newNotifications, ...notifications.value].slice(0, 50)
 
       // 浏览器通知
       newNotifications.forEach(notif => {
         if (Notification.permission === 'granted') {
-          new Notification(`${notif.username} 卷了${notif.difficultyName}题！`, {
+          const difficulty = difficultyNames[notif.difficulty] || `难度${notif.difficulty}`
+          new Notification(`${notif.username} 卷了${difficulty}题！`, {
             body: `${notif.problemId}: ${notif.problemTitle}`,
             icon: '🎯'
           })
@@ -319,9 +328,16 @@ const fetchNotifications = async () => {
 }
 
 onMounted(() => {
-  // 请求浏览器通知权限
+  // 请求浏览器通知权限（使用延迟以避免"不在事件处理中"的错误）
   if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission()
+    // 在用户交互后才请求权限
+    document.addEventListener('click', () => {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission().catch(err => {
+          console.warn('Notification permission denied:', err)
+        })
+      }
+    }, { once: true })
   }
 })
 

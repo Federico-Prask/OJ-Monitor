@@ -42,7 +42,6 @@ namespace OJMonitor.API.Services
             _crawlerTask = CrawlerLoopAsync(usernames, intervalSeconds, _crawlerCts.Token);
             
             _logger.LogInformation($"Watchlist crawler started for {usernames.Count} users with interval {intervalSeconds}s");
-            await Task.CompletedTask;
         }
 
         public async Task StopWatchlistCrawlerAsync()
